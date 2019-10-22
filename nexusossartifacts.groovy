@@ -1,37 +1,32 @@
 pipeline {
-
     agent {
         label "master"
     }
-
     tools {
-        // Note: This should match with the tool name configured in your jenkins instance (JENKINS_URL/configureTools/)
+        // Note: this should match with the tool name configured in your jenkins instance (JENKINS_URL/configureTools/)
         maven "Maven 3.6.0"
     }
-
     environment {
         // This can be nexus3 or nexus2
         NEXUS_VERSION = "nexus3"
         // This can be http or https
         NEXUS_PROTOCOL = "http"
         // Where your Nexus is running
-        NEXUS_URL = "172.17.0.3:8081"
+        NEXUS_URL = "18.188.76.82:8081"
         // Repository where we will upload the artifact
-        NEXUS_REPOSITORY = "repository-example"
+        NEXUS_REPOSITORY = "nexusrepo-example"
         // Jenkins credential id to authenticate to Nexus OSS
-        NEXUS_CREDENTIAL_ID = "nexus-credentials"
+        NEXUS_CREDENTIAL_ID = "admin123"
     }
-
     stages {
         stage("clone code") {
             steps {
                 script {
                     // Let's clone the source
-                    git 'https://github.com/danielalejandrohc/cargotracker.git';
+                    git 'https://github.com/bingoassistance/spring-petclinic.git';
                 }
             }
         }
-
         stage("mvn build") {
             steps {
                 script {
@@ -41,7 +36,6 @@ pipeline {
                 }
             }
         }
-
         stage("publish to nexus") {
             steps {
                 script {
@@ -55,10 +49,8 @@ pipeline {
                     artifactPath = filesByGlob[0].path;
                     // Assign to a boolean response verifying If the artifact name exists
                     artifactExists = fileExists artifactPath;
-                    
                     if(artifactExists) {
                         echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
-                        
                         nexusArtifactUploader(
                             nexusVersion: NEXUS_VERSION,
                             protocol: NEXUS_PROTOCOL,
@@ -73,7 +65,6 @@ pipeline {
                                 classifier: '',
                                 file: artifactPath,
                                 type: pom.packaging],
-
                                 // Lets upload the pom.xml file for additional information for Transitive dependencies
                                 [artifactId: pom.artifactId,
                                 classifier: '',
@@ -81,13 +72,11 @@ pipeline {
                                 type: "pom"]
                             ]
                         );
-
                     } else {
                         error "*** File: ${artifactPath}, could not be found";
                     }
                 }
             }
         }
-        
     }
 }
