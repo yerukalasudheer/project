@@ -18,7 +18,7 @@ pipeline {
         stage(imagebuild){
             steps{
                 sh '''
-                docker build -t srini-test .
+                sudo docker build -t srini-test .
                 '''
             }
         }
