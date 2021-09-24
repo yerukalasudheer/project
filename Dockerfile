@@ -8,8 +8,7 @@ RUN mv jdk8u282-b08 java8
 RUN wget https://mirrors.estointernet.in/apache/tomcat/tomcat-8/v8.5.69/bin/apache-tomcat-8.5.69.tar.gz
 RUN tar -zxvf apache-tomcat-8.5.69.tar.gz
 RUN mv apache-tomcat-8.5.69 tomcat8
-WORKDIR /opt/tomcat8/webapps
-RUN wget https://mahesh1243.s3.ap-south-1.amazonaws.com/target/petclinic.war
+COPY /target/petclinic.war /opt/tomcat8/webapps
 RUN echo export JAVA_HOME=/opt/java8 >> /etc/profile
 RUN echo export PATH=$PATH:/opt/java8/bin >> /etc/profile
 ENV JAVA_HOME "/opt/java8"
